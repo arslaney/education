@@ -1,3 +1,11 @@
-// Supabase bağlantısı — Dashboard > Project Settings > API
+// ============================================================
+// AYAR DOSYASI — buradan düzenle
+// ============================================================
+
+// --- Supabase bağlantısı (Dashboard > Project Settings > API) ---
 window.SUPABASE_URL = "https://yvvzouqsxdvpblccmfvp.supabase.co";
-window.SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inl2dnpvdXFzeGR2cGJsY2NtZnZwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY3NTM2NDgsImV4cCI6MjA5MjMyOTY0OH0._NZcbN8ZjNy1Sr5_B0ZdvnZSK-zgnX5NFDPUZVsa-9w";
+window.SUPABASE_ANON_KEY = "SENIN-ANON-KEY"; // ofyaa projesi > Settings > API > anon public key
+
+// --- Eğitmen şifresi (yönetim paneline giriş için) ---
+// BUNU KENDİ ŞİFRENLE DEĞİŞTİR. Not: bu basit bir kapıdır, askeri güvenlik değil.
+window.EGITMEN_SIFRE = "sompo2025";

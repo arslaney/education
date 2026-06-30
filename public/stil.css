@@ -217,3 +217,17 @@ textarea.alan{min-height:130px; resize:vertical; line-height:1.6;}
 .gb b{color:var(--beyaz);}
 
 .gizli{display:none !important;}
+
+/* ---- Giriş ekranı arka plan görseli (Sompo) ---- */
+body.giris-arkaplan::after{
+  content:""; position:fixed; inset:0; z-index:0; pointer-events:none;
+  background-image:url("gorsel/giris.webp");
+  background-size:cover; background-position:center;
+  opacity:.32;
+}
+/* görselin üstüne okunabilirlik için koyu gradient */
+body.giris-arkaplan::before{
+  content:""; position:fixed; inset:0; z-index:0; pointer-events:none;
+  background:linear-gradient(180deg, rgba(10,10,15,.78) 0%, rgba(10,10,15,.55) 40%, rgba(10,10,15,.85) 100%);
+}
+body.giris-arkaplan .atmosfer{opacity:.5;}

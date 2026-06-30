@@ -56,30 +56,91 @@ const renk = (p)=> p>=75?"#22C55E":p>=50?"#F5B544":"#FF3B52";
 // ============================================================
 // SİNEMATİK AÇILIŞ + KATILIM
 // ============================================================
+// ---- arka plan görselini (Sompo) giriş ekranına uygula ----
+function girisArkaPlanAc(){
+  document.body.classList.add("giris-arkaplan");
+}
+function girisArkaPlanKapat(){
+  document.body.classList.remove("giris-arkaplan");
+}
+
+// 1) ROL SEÇİMİ — Eğitmen / Öğrenci
 function girisEkran(){
+  girisArkaPlanAc();
   ekran(`
     <div class="merkez" style="flex:1; padding:30px 0;">
       <div class="kapsul merkez">
-        <div class="pill gir gir-1" style="margin-bottom:28px;">● CANLI EĞİTİM SİMÜLASYONU</div>
-        <div class="dev gir gir-2" style="font-size:clamp(40px,11vw,68px); margin-bottom:10px;">AI<br>AKADEMİ</div>
-        <p class="govde gir gir-3" style="max-width:380px; margin-bottom:36px;">
-          Önümüzdeki iki saatte sıradan bir eğitim izlemeyeceksin.
-          Bir göreve başlayacak, gerçek vakalar çözecek ve yapay zekâyı
-          <b style="color:var(--beyaz)">yaparak</b> öğreneceksin.</p>
-        <div class="kart gir gir-4" style="width:100%; max-width:380px;">
+        <div class="pill gir gir-1" style="margin-bottom:26px;">● CANLI EĞİTİM SİMÜLASYONU</div>
+        <div class="dev gir gir-2" style="font-size:clamp(38px,10vw,62px); margin-bottom:12px;">AI<br>AKADEMİ</div>
+        <p class="govde gir gir-3" style="max-width:360px; margin-bottom:34px;">
+          Sıradan bir eğitim değil. Bir göreve başla, gerçek vakalar çöz, yapay zekâyı
+          <b style="color:var(--beyaz)">yaparak</b> öğren.</p>
+        <div style="width:100%; max-width:380px; display:flex; flex-direction:column; gap:13px;">
+          <button class="btn btn-ana btn-blok btn-buyuk gir gir-4" id="rolOgrenci">🎓 &nbsp;Öğrenci olarak katıl</button>
+          <button class="btn btn-hayalet btn-blok btn-buyuk gir gir-5" id="rolEgitmen">🔑 &nbsp;Eğitmen girişi</button>
+        </div>
+      </div>
+    </div>`, false);
+  $("#rolOgrenci").onclick = ()=> ogrenciGirisEkran();
+  $("#rolEgitmen").onclick = ()=> egitmenGirisEkran();
+}
+
+// 2a) ÖĞRENCİ GİRİŞİ — kod + isim
+function ogrenciGirisEkran(){
+  girisArkaPlanAc();
+  ekran(`
+    <div class="merkez" style="flex:1; padding:30px 0;">
+      <div class="kapsul merkez">
+        <button class="kucuk" id="geriRol" style="background:none;border:none;color:var(--gri-1);cursor:pointer;margin-bottom:18px;align-self:flex-start;">‹ Geri</button>
+        <div class="kart olcek" style="width:100%; max-width:380px;">
           <div class="kart-ic">
-            <div class="etiket" style="margin-bottom:14px;">Göreve katıl</div>
+            <div class="etiket" style="margin-bottom:6px;">🎓 Öğrenci</div>
+            <div class="h3" style="margin-bottom:16px;">Göreve katıl</div>
             <input class="alan alan-kod" id="kodIn" maxlength="4" inputmode="numeric" placeholder="0000" style="margin-bottom:12px;">
             <input class="alan" id="isimIn" placeholder="Adın soyadın" style="margin-bottom:16px;">
-            <button class="btn btn-ana btn-blok btn-buyuk" id="katilBtn">Giriş yap →</button>
+            <button class="btn btn-ana btn-blok btn-buyuk" id="katilBtn">Katıl →</button>
             <div class="kucuk" id="hata" style="color:var(--kirmizi-parlak); margin-top:12px; text-align:center; min-height:18px;"></div>
           </div>
         </div>
       </div>
     </div>`, false);
+  $("#geriRol").onclick = ()=> girisEkran();
   $("#katilBtn").onclick = katil;
   $("#kodIn").addEventListener("keydown",e=>{if(e.key==="Enter")$("#isimIn").focus();});
   $("#isimIn").addEventListener("keydown",e=>{if(e.key==="Enter")katil();});
+}
+
+// 2b) EĞİTMEN GİRİŞİ — şifre
+function egitmenGirisEkran(){
+  girisArkaPlanAc();
+  ekran(`
+    <div class="merkez" style="flex:1; padding:30px 0;">
+      <div class="kapsul merkez">
+        <button class="kucuk" id="geriRol" style="background:none;border:none;color:var(--gri-1);cursor:pointer;margin-bottom:18px;align-self:flex-start;">‹ Geri</button>
+        <div class="kart olcek" style="width:100%; max-width:380px;">
+          <div class="kart-ic">
+            <div class="etiket" style="margin-bottom:6px;">🔑 Eğitmen</div>
+            <div class="h3" style="margin-bottom:16px;">Yönetim paneli girişi</div>
+            <input class="alan" id="sifreIn" type="password" placeholder="Eğitmen şifresi" style="margin-bottom:16px;">
+            <button class="btn btn-ana btn-blok btn-buyuk" id="egitmenBtn">Panele gir →</button>
+            <div class="kucuk" id="hata" style="color:var(--kirmizi-parlak); margin-top:12px; text-align:center; min-height:18px;"></div>
+          </div>
+        </div>
+      </div>
+    </div>`, false);
+  $("#geriRol").onclick = ()=> girisEkran();
+  const dene = ()=>{
+    const s = $("#sifreIn").value;
+    if(s === (window.EGITMEN_SIFRE || "sompo2025")){
+      girisArkaPlanKapat();
+      sessionStorage.setItem("egitmen_ok","1");
+      location.href = "yonetim.html";
+    } else {
+      $("#hata").textContent = "Şifre yanlış.";
+    }
+  };
+  $("#egitmenBtn").onclick = dene;
+  $("#sifreIn").addEventListener("keydown",e=>{if(e.key==="Enter")dene();});
 }
 
 async function katil(){
@@ -89,9 +150,10 @@ async function katil(){
   if(!ad) return $("#hata").textContent="Adını gir.";
   $("#katilBtn").disabled=true; $("#katilBtn").textContent="Bağlanıyor...";
   const { data:ot } = await sb.from("oturumlar").select("*").eq("kod",kod).maybeSingle();
-  if(!ot){ $("#hata").textContent="Bu kodda bir görev bulunamadı."; $("#katilBtn").disabled=false; $("#katilBtn").textContent="Giriş yap →"; return; }
+  if(!ot){ $("#hata").textContent="Bu kodda bir görev bulunamadı."; $("#katilBtn").disabled=false; $("#katilBtn").textContent="Katıl →"; return; }
   const { data:o } = await sb.from("oyuncular").insert({ oturum_kodu:kod, isim:ad }).select().single();
   durum.oturum=kod; durum.oyuncuId=o.id; durum.isim=ad;
+  girisArkaPlanKapat();
 
   sb.channel("akad-"+kod)
     .on("postgres_changes",{event:"UPDATE",schema:"public",table:"oturumlar",filter:"kod=eq."+kod},
