@@ -108,8 +108,8 @@ const turAd={ giris:"Açılış", meslek_secimi:"Departman seçimi", bolum_gecis
   notebook_ogren:"Öğren · NotebookLM", notebook_demo:"Demo · Sesli özet", akis_ogren:"Öğren · İş akışı", etik_kart:"Öğren · Etik kuralları",
   prompt_ogren:"Öğren · Prompt kurucu", arac_test:"Saha · Isınma testi", arac_secimi:"Saha · Araç seçimi",
   arac_secimi2:"Saha · Kaynak testi", akis_test:"Saha · Akış sıralama", etik_test:"Saha · Etik testi",
-  rehberli_gorev:"Saha · Gerçek iş görevi", prompt_saha:"Saha · İlk vaka", onarim:"Saha · Onarım", saha_vaka:"Saha · Final operasyon", final:"Kapanış" };
-const sahaTurler=["arac_test","arac_secimi","arac_secimi2","prompt_saha","onarim","akis_test","rehberli_gorev","saha_vaka","etik_test"];
+  rehberli_gorev:"Saha · Gerçek iş görevi", prompt_saha:"Saha · İlk vaka", onarim:"Saha · Onarım", saha_vaka:"Saha · Final operasyon", bitirme_sim:"Saha · Bitirme simülasyonu", final:"Kapanış" };
+const sahaTurler=["arac_test","arac_secimi","arac_secimi2","prompt_saha","onarim","akis_test","rehberli_gorev","saha_vaka","bitirme_sim","etik_test"];
 
 (function zerreler(){const at=document.querySelector(".atmosfer");for(let i=0;i<10;i++){const z=document.createElement("div");z.className="zerre";z.style.left=Math.random()*100+"%";z.style.animationDuration=(8+Math.random()*8)+"s";z.style.animationDelay=(Math.random()*8)+"s";at.appendChild(z);}})();
 
@@ -188,7 +188,7 @@ function cizCevap(){
   const list=kayitlar.filter(k=>k.bolum===suB);
   if(!list.length){el("cevapAlani").innerHTML='<div class="bos">Bu bölümde henüz cevap yok.</div>';return;}
   const b=B[suB];
-  if(["prompt_saha","onarim","saha_vaka"].includes(b.tur)){
+  if(["prompt_saha","onarim","saha_vaka","bitirme_sim","rehberli_gorev"].includes(b.tur)){
     const s=[...list].sort((a,b)=>b.puan-a.puan);
     el("cevapAlani").innerHTML=s.map(c=>`<div class="cevapKutu"><span class="pz" style="color:${c.puan>=75?'var(--yesil)':c.puan>=50?'var(--altin)':'var(--kirmizi-parlak)'}">${c.puan}</span>
       <div class="ad">${c.isim} <span style="color:var(--gri-3)">· ${c.meslek||''}</span></div><div class="ic">${(c.icerik||'').slice(0,150)}</div></div>`).join("");

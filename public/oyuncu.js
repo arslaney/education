@@ -207,6 +207,7 @@ function bolumCiz(idx, kilit){
   if(t==="akis_test")      return sahaSarmal(idx,kilit,()=>akisTestEkran(idx));
   if(t==="rehberli_gorev") return sahaSarmal(idx,kilit,()=>rehberliGorevEkran(idx,b));
   if(t==="saha_vaka")      return sahaSarmal(idx,kilit,()=>sahaVakaEkran(idx,b));
+  if(t==="bitirme_sim")    return sahaSarmal(idx,kilit,()=>bitirmeSimEkran(idx));
   if(t==="etik_test")      return sahaSarmal(idx,kilit,()=>etikTestEkran(idx));
   if(t==="final")          return finalEkran();
 }

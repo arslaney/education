@@ -91,6 +91,9 @@ window.BOLUMLER = [
   { tur:"anlatim_slayt", slayt:"etik" },
   { tur:"etik_test", faz:"saha" },
 
+  { tur:"bolum_gecis", no:9, ad:"Bitirme Simülasyonu", alt:"Öğrendiğin her şeyi tek bir gerçek işte göster", sure:"~12 dk" },
+  { tur:"bitirme_sim", faz:"saha" },
+
   { tur:"final" },
 ];
 
@@ -295,3 +298,60 @@ function rehberliGorev(adi){ return window.REHBERLI_GOREVLER[adi]; }
 window.rehberliGorev = rehberliGorev;
 function anlatimSlayt(adi){ return window.ANLATIM_SLAYTLAR[adi]; }
 window.anlatimSlayt = anlatimSlayt;
+
+// ============================================================
+// BİTİRME SİMÜLASYONU — tek büyük iş, öğrenilen her şey burada
+// "Vay be" anı: eski süre vs yeni süre + puan
+// ============================================================
+window.BITIRME = {
+  ik:{
+    baglik:"Pazartesi sabahı: yeni yönetmelik krizi",
+    durum:"Saat 09:00. Yönetimden e-posta düştü: yeni uzaktan çalışma yönetmeliği bugün tüm şirkete duyurulacak. Elinde 40 sayfalık resmi metin var ve öğlene kadar çalışanların anlayacağı, net bir duyuru hazırlaman gerekiyor. Üstelik İK ekibinin de en çok hangi soruların geleceğini bilmesi lazım.",
+    gorev:"Bu işi tek bir güçlü promptla çöz: 40 sayfalık yönetmeliği (1) çalışanların anlayacağı sade dille 5 maddede özetleyen, (2) gelmesi muhtemel 3 soruyu önceden yanıtlayan, (3) sıcak ama profesyonel bir duyuru e-postası taslağı üreten bir prompt yaz. Rol + bağlam + görev + format içersin.",
+    eskiSure:"2-3 saat",
+    eskiAnlatim:"40 sayfayı tek tek okumak, not almak, sadeleştirmek, soruları tahmin etmek, e-postayı sıfırdan yazmak — normalde bütün bir sabahını alırdı.",
+    degerlendirme:"Bir İK duyuru hazırlığı promptunu değerlendir: özet net mi, öngörülen sorular isabetli mi, e-posta tonu doğru mu, yapı eksiksiz mi?",
+  },
+  akademi:{
+    baglik:"Pazartesi sabahı: yeni modül yetişmeli",
+    durum:"Saat 09:00. Bir uzmandan dağınık ders notları geldi — slaytlar, e-postalar, kayıtlar. Bu hafta yeni bir oryantasyon modülü yayına girmeli. Elinde ham malzeme var, senden derli toplu, öğrenme hedefli, sunulabilir bir modül taslağı bekleniyor.",
+    gorev:"Bu işi tek bir güçlü promptla çöz: dağınık notlardan (1) net öğrenme hedefleri çıkaran, (2) 5 bölümlük bir modül iskeleti kuran, (3) ilk bölüm için sunulabilir bir slayt taslağı (başlık + 3 madde + konuşmacı notu) üreten bir prompt yaz. Rol + bağlam + görev + format içersin.",
+    eskiSure:"yarım gün",
+    eskiAnlatim:"Dağınık malzemeyi okumak, yapı kurmak, hedef yazmak, slayta dökmek — normalde yarım gününü alırdı.",
+    degerlendirme:"Bir eğitim modülü tasarım promptunu değerlendir: öğrenme hedefleri net mi, yapı mantıklı mı, slayt taslağı sunulabilir mi?",
+  },
+  uw:{
+    baglik:"Pazartesi sabahı: acil risk değerlendirmesi",
+    durum:"Saat 09:00. Önemli bir acenteden 40 sayfalık ticari poliçe teklifi geldi, öğlene kadar risk görüşün isteniyor. Ekler, şartlar, istisnalar iç içe. Hızlı ama savunulabilir bir değerlendirme çıkarman lazım.",
+    gorev:"Bu işi tek bir güçlü promptla çöz: teklifi (1) 5 maddede özetleyen, (2) 3 riskli/eksik maddeyi gerekçesiyle işaretleyen, (3) net bir kabul/ret/şartlı öneri veren bir prompt yaz. Rol + bağlam + görev + format içersin.",
+    eskiSure:"2 saat",
+    eskiAnlatim:"40 sayfalık teklifi taramak, riskleri ayıklamak, gerekçe yazmak — normalde saatlerini alırdı.",
+    degerlendirme:"Bir underwriting risk değerlendirme promptunu değerlendir: özet net mi, riskler isabetli mi, öneri savunulabilir mi?",
+  },
+  hasar:{
+    baglik:"Pazartesi sabahı: karmaşık hasar dosyası",
+    durum:"Saat 09:00. Önünde çok belgeli bir kaza hasar dosyası var — ekspertiz, faturalar, ifadeler, bazıları çelişkili. Öğlene kadar bir değerlendirme ve müşteriye dönüş yapman gerekiyor.",
+    gorev:"Bu işi tek bir güçlü promptla çöz: dosyayı (1) 5 maddede özetleyen, (2) 3 tutarsızlık/risk noktasını çıkaran, (3) müşteriye gidecek bilgilendirici, güven veren bir e-posta taslağı üreten bir prompt yaz. Rol + bağlam + görev + format içersin.",
+    eskiSure:"2 saat",
+    eskiAnlatim:"Onlarca sayfayı okumak, çelişkileri bulmak, müşteriye uygun dille yazmak — normalde saatlerini alırdı.",
+    degerlendirme:"Bir hasar dosyası değerlendirme promptunu değerlendir: özet net mi, tutarsızlıklar yakalanmış mı, müşteri e-postası uygun mu?",
+  },
+  finans:{
+    baglik:"Pazartesi sabahı: kurul özeti yetişmeli",
+    durum:"Saat 09:00. 40 sayfalık çeyrek raporu geldi, yönetim kuruluna öğlen 1 sayfalık özet sunulacak. Rakamların ardındaki hikâyeyi de çıkarman lazım.",
+    gorev:"Bu işi tek bir güçlü promptla çöz: raporu (1) 5 maddede özetleyen, (2) 3 dikkat çekici trend/sapmayı nedeniyle açıklayan, (3) kurula sunulacak 1 paragraflık yönetici özeti üreten bir prompt yaz. Rol + bağlam + görev + format içersin.",
+    eskiSure:"3 saat",
+    eskiAnlatim:"Raporu okumak, trendleri yakalamak, kurula uygun dille özetlemek — normalde yarım gününü alırdı.",
+    degerlendirme:"Bir finansal rapor özeti promptunu değerlendir: özet net mi, trendler isabetli mi, yönetici özeti kurula uygun mu?",
+  },
+  satis:{
+    baglik:"Pazartesi sabahı: büyük teklif kaçıyor",
+    durum:"Saat 09:00. Büyük bir müşteri 40 sayfalık teklif talebi gönderdi ve rakip de teklif veriyor. Öğlene kadar kazandıracak bir teklif yanıtı hazırlaman lazım.",
+    gorev:"Bu işi tek bir güçlü promptla çöz: talebi (1) 5 maddede özetleyen, (2) 3 kritik müşteri beklentisini çıkaran, (3) değeri vurgulayan ikna edici bir teklif yanıtı taslağı üreten bir prompt yaz. Rol + bağlam + görev + format içersin.",
+    eskiSure:"2-3 saat",
+    eskiAnlatim:"Uzun talebi okumak, beklentileri çıkarmak, ikna edici yanıt yazmak — normalde yarım gününü alırdı.",
+    degerlendirme:"Bir satış teklifi yanıtı promptunu değerlendir: özet net mi, beklentiler isabetli mi, yanıt ikna edici mi?",
+  },
+};
+function bitirme(meslekId){ return window.BITIRME[meslekId] || window.BITIRME.ik; }
+window.bitirme = bitirme;

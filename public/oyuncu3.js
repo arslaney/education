@@ -418,3 +418,82 @@ function rehberliGorevEkran(idx, b){
     }catch(e){ hataEkran(e.message); }
   };
 }
+
+// ============================================================
+// BİTİRME SİMÜLASYONU — tek büyük iş + "vay be" anı (süre + puan)
+// ============================================================
+function bitirmeSimEkran(idx){
+  const v = window.bitirme(durum.meslek);
+  let basla = Date.now(); // süre ölçümü
+  ekran(`<div style="flex:1;padding:24px 0;"><div class="kapsul">
+    <div class="merkez"><div class="pill altin gir" style="margin-bottom:12px;">🎯 BİTİRME SİMÜLASYONU</div>
+      <h2 class="h2 gir gir-1" style="margin-bottom:6px;">${v.baglik}</h2>
+      <p class="kucuk gir gir-1" style="max-width:380px;margin-bottom:8px;">Öğrendiğin her şeyi şimdi tek bir gerçek işte kullan.</p></div>
+    <div class="kart gir gir-2" style="margin-bottom:14px;border-left:3px solid var(--altin);border-radius:var(--r-m);"><div class="kart-ic">
+      <div class="etiket" style="margin-bottom:8px;">Durum</div>
+      <p style="font-size:15px;line-height:1.6;margin-bottom:14px;">${v.durum}</p>
+      <div class="etiket" style="color:var(--altin);margin-bottom:8px;">Görevin</div>
+      <p class="govde" style="font-size:14px;">${v.gorev}</p>
+    </div></div>
+    <textarea class="alan gir gir-3" id="bsIn" placeholder="Tüm öğrendiklerini kullan — rol + bağlam + görev + format içeren güçlü promptunu buraya yaz..." style="min-height:170px;"></textarea>
+    <button class="btn btn-ana btn-blok btn-buyuk gir gir-4" id="bsBtn" style="margin-top:14px;">İşi bitir ve gönder →</button>
+  </div></div>`);
+
+  $("#bsBtn").onclick = async ()=>{
+    const prompt = $("#bsIn").value.trim();
+    if(prompt.length < 20) return alert("Bu büyük bir iş — promptunu detaylı yaz (rol, bağlam, görev, format).");
+    const gecenSn = Math.max(1, Math.round((Date.now()-basla)/1000));
+    calisiyorEkran("İşin değerlendiriliyor...");
+    try{
+      const r = await fetch("/api/degerlendir",{method:"POST",headers:{"Content-Type":"application/json"},
+        body:JSON.stringify({prompt, gorev:v.degerlendirme})});
+      const d = await r.json(); if(!r.ok) throw new Error(d.error||"hata");
+      await kaydet(idx,"bitirme_sim",prompt.slice(0,200),null,d.puan,{detay:d.detay,gb:d.geri_bildirim,iyi:d.iyilestirilmis,ai:d.ai_cevap});
+      basariPerde(d.puan,"İş tamamlandı!",()=> bitirmeSonucEkran(v, d, gecenSn));
+    }catch(e){ hataEkran(e.message); }
+  };
+}
+
+// "Vay be" anı — eski süre vs yeni süre + puan
+function bitirmeSonucEkran(v, d, gecenSn){
+  const dk = Math.floor(gecenSn/60), sn = gecenSn%60;
+  const sureMetni = dk>0 ? `${dk} dk ${sn} sn` : `${sn} saniye`;
+  ekran(`<div style="flex:1;padding:24px 0;"><div class="kapsul">
+    <div class="merkez olcek">
+      <div style="font-size:54px;margin-bottom:6px;">🤯</div>
+      <h1 class="dev gir gir-1" style="font-size:clamp(26px,7vw,40px);margin-bottom:8px;">İşte fark bu.</h1>
+    </div>
+
+    <div class="kart gir gir-1 parlak-gec" style="margin:18px 0;border-color:var(--altin)55;"><div class="kart-ic" style="padding:24px;">
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;">
+        <div style="flex:1;text-align:center;">
+          <div class="kucuk" style="margin-bottom:6px;">Eskiden</div>
+          <div class="dev" style="font-size:30px;color:var(--gri-1);">${v.eskiSure}</div>
+          <div class="kucuk" style="margin-top:4px;">manuel iş</div>
+        </div>
+        <div style="font-size:28px;color:var(--altin);">→</div>
+        <div style="flex:1;text-align:center;">
+          <div class="kucuk" style="margin-bottom:6px;">Şimdi</div>
+          <div class="dev" style="font-size:30px;color:var(--altin);">${sureMetni}</div>
+          <div class="kucuk" style="margin-top:4px;">AI ile</div>
+        </div>
+      </div>
+    </div></div>
+
+    <div class="gb gir gir-2" style="margin-bottom:14px;">${v.eskiAnlatim} <b style="color:var(--beyaz)">Sen bunu ${sureMetni} içinde bitirdin.</b></div>
+
+    <div class="kart gir gir-3" style="margin-bottom:14px;"><div class="kart-ic" style="padding:18px;text-align:center;">
+      <div class="kucuk" style="margin-bottom:4px;">İşinin kalite puanı</div>
+      <div class="dev" style="font-size:48px;color:${renk(d.puan)};">${d.puan}</div>
+      <div class="kucuk">/ 100</div>
+    </div></div>
+
+    <div class="gb gir gir-4" style="margin-bottom:14px;">${d.geri_bildirim}</div>
+
+    <div class="kart olcek" style="border-color:var(--altin)44;background:rgba(245,181,68,.06);"><div class="kart-ic" style="padding:20px;text-align:center;">
+      <p class="govde" style="font-size:15px;color:var(--beyaz);">Bu zamana kadar saatlerini verdiğin bir işi, az önce dakikalar içinde bitirdin. <b>İş hayatın bugün değişti.</b></p>
+    </div></div>
+
+    <div class="gb yesil olcek" style="margin-top:14px;text-align:center;">Kaydedildi ✓ Kapanışa geçiyoruz</div>
+  </div></div>`);
+}
