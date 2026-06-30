@@ -365,8 +365,9 @@ function etikTestEkran(idx){
 function rehberliGorevEkran(idx, b){
   const g = window.rehberliGorev(b.gorev);
   if(!g) return bekleEkran("Görev yükleniyor.","Görev");
-  const aracRenk = g.arac==="NotebookLM"?"#22C55E":g.arac==="Claude"?"#E11D34":"#8B5CF6";
-  const aracIkon = g.arac==="NotebookLM"?"🎧":g.arac==="Claude"?"💬":"🎬";
+  const veri = (window.DOSYA_ICERIK && g.veriAnahtari) ? window.DOSYA_ICERIK[g.veriAnahtari] : "";
+  const aracRenk = "#E11D34";
+  const onizleme = veri ? veri.slice(0, 600) + (veri.length>600 ? "\n…" : "") : "";
   const adimlar = g.adimlar.map((a,i)=>`
     <div style="display:flex;gap:12px;align-items:flex-start;margin-bottom:11px;">
       <div style="width:26px;height:26px;border-radius:8px;background:${aracRenk};color:#fff;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:13px;flex-shrink:0;">${i+1}</div>
@@ -379,40 +380,58 @@ function rehberliGorevEkran(idx, b){
       <div class="etiket" style="margin-bottom:8px;">Senaryo</div>
       <p style="font-size:15px;line-height:1.55;">${g.senaryo}</p></div></div>
 
-    <a href="${g.dosya}" download="${g.dosyaAd}" class="btn btn-hayalet btn-blok gir gir-3" style="margin-bottom:16px;text-decoration:none;border-color:${aracRenk}66;">⬇ Örnek dosyayı indir — ${g.dosyaAd}</a>
+    <div class="kart gir gir-3" style="margin-bottom:14px;border-color:#3B82F644;"><div class="kart-ic">
+      <div style="display:flex;align-items:center;justify-content:space-between;cursor:pointer;" id="veriBaslik">
+        <div class="etiket" style="color:#60A5FA;">${g.veriEtiket}</div>
+        <span class="kucuk" id="veriOk" style="color:#60A5FA;">göster ▾</span>
+      </div>
+      <pre id="veriKutu" style="display:none;margin-top:12px;max-height:200px;overflow:auto;background:rgba(0,0,0,.3);border-radius:10px;padding:12px;font-size:11.5px;line-height:1.5;color:var(--gri-1);white-space:pre-wrap;font-family:ui-monospace,monospace;">${onizleme.replace(/</g,"&lt;")}</pre>
+      <div class="kucuk" style="margin-top:8px;color:var(--gri-2);">✓ Bu veri uygulamada hazır — yüklemene gerek yok. Sadece promptunu yaz.</div>
+    </div></div>
 
     <div class="kart gir gir-3" style="margin-bottom:16px;"><div class="kart-ic">
-      <div class="etiket" style="margin-bottom:14px;">${aracIkon} ${g.arac}'ta yap</div>
+      <div class="etiket" style="margin-bottom:14px;">💬 Ne yapman gerekiyor</div>
       ${adimlar}
     </div></div>
 
     <div class="kart gir gir-4" style="border-color:var(--altin)44;"><div class="kart-ic">
-      <div class="etiket" style="color:var(--altin);margin-bottom:8px;">Çıktını değerlendir</div>
-      <p class="kucuk" style="margin-bottom:12px;">${g.ciktiIstegi}</p>
-      <textarea class="alan" id="rgIn" placeholder="Aracın sana verdiği çıktıyı buraya yapıştır..."></textarea>
-      <button class="btn btn-ana btn-blok btn-buyuk" id="rgBtn" style="margin-top:12px;">Değerlendir →</button>
+      <div class="etiket" style="color:var(--altin);margin-bottom:10px;">Promptunu yaz</div>
+      <textarea class="alan" id="rgIn" placeholder="${g.promptYer}" style="min-height:120px;"></textarea>
+      <button class="btn btn-ana btn-blok btn-buyuk" id="rgBtn" style="margin-top:12px;">Claude'a gönder →</button>
     </div></div>
   </div></div>`);
 
+  $("#veriBaslik").onclick = ()=>{
+    const k=$("#veriKutu"), o=$("#veriOk");
+    if(k.style.display==="none"){ k.style.display="block"; o.textContent="gizle ▴"; }
+    else { k.style.display="none"; o.textContent="göster ▾"; }
+  };
+
   $("#rgBtn").onclick = async ()=>{
-    const cikti = $("#rgIn").value.trim();
-    if(cikti.length<15) return alert("Çıktını yapıştır (en az birkaç cümle).");
-    calisiyorEkran("Claude çıktını değerlendiriyor...");
+    const prompt = $("#rgIn").value.trim();
+    if(prompt.length<10) return alert("Promptunu yaz (en az birkaç kelime).");
+    calisiyorEkran("Claude verini işliyor...");
     try{
       const r = await fetch("/api/degerlendir",{method:"POST",headers:{"Content-Type":"application/json"},
-        body:JSON.stringify({prompt:cikti, gorev:g.gorevDeger})});
+        body:JSON.stringify({prompt, gorev:g.gorevDeger, veri})});
       const d = await r.json(); if(!r.ok) throw new Error(d.error||"hata");
-      await kaydet(idx,"rehberli_gorev",cikti.slice(0,200),null,d.puan,{detay:d.detay,gb:d.geri_bildirim,iyi:d.iyilestirilmis});
-      basariPerde(d.puan,"Çıktın değerlendirildi",()=>{
+      await kaydet(idx,"rehberli_gorev",prompt.slice(0,200),null,d.puan,{detay:d.detay,gb:d.geri_bildirim,iyi:d.iyilestirilmis,ai:d.ai_cevap});
+      basariPerde(d.puan,"Claude işini bitirdi",()=>{
         ekran(`<div style="flex:1;padding:24px 0;"><div class="kapsul">
-          <div class="merkez olcek"><div class="pill" style="margin-bottom:8px;">${g.baslik}</div>
-            <div class="dev" style="font-size:60px;color:${renk(d.puan)};">${d.puan}</div>
-            <div class="kucuk" style="margin-bottom:20px;">/ 100 puan</div></div>
-          <div class="gb gir gir-1" style="margin-bottom:12px;">${d.geri_bildirim}</div>
-          ${d.iyilestirilmis?`<div class="kart gir gir-2" style="border-color:var(--altin)44;"><div class="kart-ic" style="padding:18px;">
-            <div class="etiket" style="color:var(--altin);margin-bottom:8px;">Daha da iyisi için ipucu</div>
-            <div style="font-size:13.5px;line-height:1.6;color:var(--beyaz);white-space:pre-wrap;">${d.iyilestirilmis}</div></div></div>`:""}
-          <div class="gb yesil olcek" style="margin-top:14px;text-align:center;">Kaydedildi ✓ Sıradaki görev için bekle</div>
+          <div class="merkez"><div class="pill" style="margin-bottom:8px;">${g.baslik}</div></div>
+          <div class="kart gir gir-1" style="margin-bottom:14px;border-color:${aracRenk}44;"><div class="kart-ic">
+            <div class="etiket" style="color:${aracRenk};margin-bottom:10px;">💬 Claude'un çıktısı</div>
+            <div style="font-size:14px;line-height:1.65;color:var(--beyaz);white-space:pre-wrap;">${(d.ai_cevap||"").replace(/</g,"&lt;")}</div>
+          </div></div>
+          <div class="kart gir gir-2" style="margin-bottom:12px;"><div class="kart-ic" style="padding:16px;text-align:center;">
+            <div class="kucuk" style="margin-bottom:4px;">Promptunun kalite puanı</div>
+            <div class="dev" style="font-size:42px;color:${renk(d.puan)};">${d.puan}</div><div class="kucuk">/ 100</div>
+          </div></div>
+          <div class="gb gir gir-3" style="margin-bottom:12px;">${d.geri_bildirim}</div>
+          ${d.iyilestirilmis?`<div class="kart gir gir-4" style="border-color:var(--altin)44;"><div class="kart-ic" style="padding:16px;">
+            <div class="etiket" style="color:var(--altin);margin-bottom:8px;">Daha da iyi bir prompt</div>
+            <div style="font-size:13px;line-height:1.6;color:var(--beyaz);white-space:pre-wrap;">${(d.iyilestirilmis||"").replace(/</g,"&lt;")}</div></div></div>`:""}
+          <div class="gb yesil olcek" style="margin-top:14px;text-align:center;">Kaydedildi ✓ Sıradaki için bekle</div>
         </div></div>`);
       });
     }catch(e){ hataEkran(e.message); }
