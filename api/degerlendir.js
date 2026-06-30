@@ -26,14 +26,19 @@ export default async function handler(req, res) {
   }
 
   try {
-    const { prompt, gorev } = req.body || {};
+    const { prompt, gorev, veri } = req.body || {};
     if (!prompt || prompt.trim().length < 2) return res.status(400).json({ error: "Prompt boş olamaz" });
 
-    // 1) Prompt'u gerçekten çalıştır — katılımcı kendi prompt'unun çıktısını görsün
-    const aiCevapPromise = claude(
-      "Sen yardımsever bir asistansın. Kullanıcının verdiği talimatı uygula. Kısa ve net ol, en fazla 180 kelime.",
-      prompt, 600
-    ).catch(() => "(Cevap üretilemedi)");
+    // 1) Prompt'u gerçekten çalıştır — katılımcı kendi prompt'unun çıktısını görsün.
+    //    Eğer gömülü veri (Excel/PDF/Word içeriği) varsa, onu da Claude'a ver ki gerçek analiz üretsin.
+    const calismaUser = veri
+      ? `${prompt}\n\n--- ÇALIŞILACAK VERİ ---\n${veri}`
+      : prompt;
+    const calismaSystem = veri
+      ? "Sen yardımsever bir iş asistanısın. Kullanıcının talimatını, verilen veriye dayanarak uygula. Sadece verilen veriyi kullan, uydurma. Net ve düzenli ol, en fazla 280 kelime."
+      : "Sen yardımsever bir asistansın. Kullanıcının verdiği talimatı uygula. Kısa ve net ol, en fazla 180 kelime.";
+    const aiCevapPromise = claude(calismaSystem, calismaUser, veri ? 900 : 600)
+      .catch(() => "(Cevap üretilemedi)");
 
     // 2) Prompt'u değerlendir
     const degerSystem = `Sen bir prompt mühendisliği eğitmenisin.
