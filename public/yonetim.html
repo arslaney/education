@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>AI Akademi — Komuta Merkezi</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Sora:wght@600;700;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="stil.css">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="config.js"></script>
+<script src="icerik.js"></script>
+<style>
+  body{overflow-y:auto;}
+  .duzen{display:grid; grid-template-columns:1.5fr 1fr; gap:18px; padding:18px 24px; position:relative; z-index:1; align-items:start;}
+  @media(max-width:1000px){.duzen{grid-template-columns:1fr;}}
+  .blok{margin-bottom:18px;}
+  .baslikBar{display:flex;align-items:center;justify-content:space-between;padding:16px 24px;position:relative;z-index:1;border-bottom:1px solid var(--cizgi);}
+  .kodKutu{background:linear-gradient(135deg,var(--kirmizi),var(--kirmizi-koyu));padding:10px 22px;border-radius:var(--r-m);text-align:center;box-shadow:0 6px 20px -6px rgba(225,29,52,.6);}
+  .kodKutu .e{font-size:10px;letter-spacing:.15em;opacity:.9;}
+  .kodKutu .k{font-size:30px;font-weight:800;letter-spacing:.25em;font-family:var(--font-mono);line-height:1;}
+  .panelBaslik{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--gri-2);margin-bottom:12px;}
+  .suBolum{background:var(--zemin-0);border-radius:var(--r-m);padding:18px;margin-bottom:14px;border:1px solid var(--cizgi);}
+  .suBolum .no{font-family:var(--font-mono);font-size:12px;color:var(--kirmizi-parlak);letter-spacing:.2em;}
+  .suBolum .ba{font-family:var(--font-display);font-size:22px;font-weight:700;margin:4px 0;}
+  .suBolum .tu{font-size:12px;color:var(--gri-2);}
+  .btnSatir{display:flex;gap:10px;flex-wrap:wrap;}
+  .dEt{display:inline-block;padding:5px 12px;border-radius:100px;font-size:11px;font-weight:700;margin-left:8px;letter-spacing:.05em;}
+  .dEt.kil{background:rgba(245,181,68,.15);color:var(--altin);}
+  .dEt.ac{background:rgba(34,197,94,.15);color:var(--yesil);}
+  .dEt.oto{background:rgba(59,130,246,.15);color:var(--mavi);}
+  .listeMini .satir{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:var(--r-s);background:var(--zemin-0);margin-bottom:6px;font-size:13px;border:1px solid transparent;}
+  .listeMini .satir.simdi{border-color:var(--kirmizi);background:rgba(225,29,52,.08);}
+  .listeMini .ix{width:22px;height:22px;border-radius:6px;background:var(--zemin-3);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0;font-family:var(--font-mono);}
+  .listeMini .satir.simdi .ix{background:var(--kirmizi);}
+  .kRow{display:flex;align-items:center;gap:10px;background:var(--zemin-0);border-radius:var(--r-s);padding:9px 12px;margin-bottom:6px;}
+  .kRow .nk{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+  .kRow .ad{flex:1;font-weight:600;font-size:13px;}
+  .kRow .mes{font-size:11px;color:var(--gri-2);}
+  .kRow .pz{font-family:var(--font-mono);font-weight:700;font-size:15px;}
+  .mesDagilim{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px;}
+  .mesEt{font-size:11px;padding:4px 10px;border-radius:100px;background:var(--zemin-3);color:var(--gri-1);}
+  .cevapKutu{background:var(--zemin-0);border-radius:var(--r-s);padding:10px 12px;margin-bottom:7px;font-size:12.5px;border:1px solid var(--cizgi);}
+  .cevapKutu .ad{font-weight:700;color:var(--kirmizi-parlak);font-size:11px;}
+  .cevapKutu .ic{color:var(--gri-1);margin-top:3px;line-height:1.4;}
+  .cevapKutu .pz{float:right;font-family:var(--font-mono);font-weight:700;}
+  .bos{color:var(--gri-3);text-align:center;padding:26px 0;font-size:13px;}
+</style>
+</head>
+<body>
+  <div class="atmosfer"><div class="grid"></div></div>
+
+  <div class="baslikBar">
+    <div class="hud-sol"><div class="hud-logo">AI</div>
+      <div class="hud-bilgi"><div class="b1">AI Akademi</div><div class="b2">Komuta Merkezi</div></div></div>
+    <div class="kodKutu"><div class="e">GÖREV KODU</div><div class="k" id="kod">----</div></div>
+  </div>
+
+  <div class="duzen">
+    <div>
+      <div class="kart blok"><div class="kart-ic">
+        <div class="panelBaslik">Bölüm Kontrolü</div>
+        <div class="suBolum">
+          <div class="no" id="bNo">BÖLÜM 00</div>
+          <div class="ba" id="bBaslik">—</div>
+          <div class="tu"><span id="bTur">—</span><span class="dEt kil" id="bDurum">KİLİTLİ</span></div>
+        </div>
+        <div class="btnSatir" style="margin-bottom:10px;">
+          <button class="btn btn-ana btn-blok" id="baslatBtn">▶ Bu bölümdeki görevi başlat</button>
+        </div>
+        <div class="btnSatir">
+          <button class="btn btn-hayalet" id="geriBtn" style="flex:1;">‹ Önceki</button>
+          <button class="btn btn-ana" id="ileriBtn" style="flex:2;">Sonraki bölüm ›</button>
+        </div>
+      </div></div>
+
+      <div class="kart blok"><div class="kart-ic">
+        <div class="panelBaslik">Bu bölümün canlı cevapları</div>
+        <div id="cevapAlani"><div class="bos">Henüz cevap yok.</div></div>
+      </div></div>
+    </div>
+
+    <div>
+      <div class="kart blok"><div class="kart-ic">
+        <div class="panelBaslik">Katılımcılar (<span id="katSay">0</span>)</div>
+        <div class="mesDagilim" id="mesDagilim"></div>
+        <div id="katListe"><div class="bos">Katılım bekleniyor.</div></div>
+      </div></div>
+      <div class="kart blok"><div class="kart-ic">
+        <div class="panelBaslik">Akış haritası</div>
+        <div class="listeMini" id="haritaListe"></div>
+      </div></div>
+    </div>
+  </div>
+
+<script>
+const sb = supabase.createClient(window.SUPABASE_URL, window.SUPABASE_ANON_KEY);
+const el=(id)=>document.getElementById(id);
+const B=window.BOLUMLER;
+let kod=null, suB=0, kilit=true, oyuncular=[], kayitlar=[];
+
+const turAd={ giris:"Açılış", meslek_secimi:"Departman seçimi", bolum_gecis:"Bölüm geçişi",
+  ogren_tahmin:"Öğren · Tahmin makinesi", ogren_kart:"Öğren · Ders notu", arac_ogren:"Öğren · Araç filosu",
+  notebook_ogren:"Öğren · NotebookLM", notebook_demo:"Demo · Sesli özet", akis_ogren:"Öğren · İş akışı", etik_kart:"Öğren · Etik kuralları",
+  prompt_ogren:"Öğren · Prompt kurucu", arac_test:"Saha · Isınma testi", arac_secimi:"Saha · Araç seçimi",
+  arac_secimi2:"Saha · Kaynak testi", akis_test:"Saha · Akış sıralama", etik_test:"Saha · Etik testi",
+  prompt_saha:"Saha · İlk vaka", onarim:"Saha · Onarım", saha_vaka:"Saha · Final operasyon", final:"Kapanış" };
+const sahaTurler=["arac_test","arac_secimi","arac_secimi2","prompt_saha","onarim","akis_test","saha_vaka","etik_test"];
+
+(function zerreler(){const at=document.querySelector(".atmosfer");for(let i=0;i<10;i++){const z=document.createElement("div");z.className="zerre";z.style.left=Math.random()*100+"%";z.style.animationDuration=(8+Math.random()*8)+"s";z.style.animationDelay=(Math.random()*8)+"s";at.appendChild(z);}})();
+
+async function kur(){
+  const url=new URL(location.href);
+  kod=url.searchParams.get("kod")||String(Math.floor(1000+Math.random()*9000));
+  el("kod").textContent=kod;
+  await sb.from("oturumlar").upsert({kod,aktif_bolum:0,faz_kilit:true},{onConflict:"kod"});
+  const {data:os}=await sb.from("oyuncular").select("*").eq("oturum_kodu",kod); oyuncular=os||[];
+  const {data:ks}=await sb.from("kayitlar").select("*").eq("oturum_kodu",kod); kayitlar=ks||[];
+  sb.channel("yon-"+kod)
+    .on("postgres_changes",{event:"INSERT",schema:"public",table:"oyuncular",filter:"oturum_kodu=eq."+kod},p=>{oyuncular.push(p.new);cizKat();})
+    .on("postgres_changes",{event:"UPDATE",schema:"public",table:"oyuncular",filter:"oturum_kodu=eq."+kod},p=>{const i=oyuncular.findIndex(x=>x.id===p.new.id);if(i>=0)oyuncular[i]=p.new;cizKat();})
+    .on("postgres_changes",{event:"INSERT",schema:"public",table:"kayitlar",filter:"oturum_kodu=eq."+kod},p=>{kayitlar.push(p.new);cizKat();cizCevap();})
+    .subscribe();
+  cizBolum();cizKat();cizCevap();cizHarita();
+}
+
+function cizBolum(){
+  const b=B[suB];
+  el("bNo").textContent="BÖLÜM "+String(suB).padStart(2,"0");
+  el("bBaslik").textContent=b.ad||turAd[b.tur]||b.tur;
+  el("bTur").textContent=turAd[b.tur]||b.tur;
+  const sahaMi=sahaTurler.includes(b.tur);
+  const de=el("bDurum");
+  if(!sahaMi){de.textContent="OTOMATİK";de.className="dEt oto";}
+  else if(kilit){de.textContent="KİLİTLİ";de.className="dEt kil";}
+  else{de.textContent="AÇIK";de.className="dEt ac";}
+  el("baslatBtn").disabled=!sahaMi||!kilit;
+  el("baslatBtn").textContent=sahaMi?(kilit?"▶ Bu bölümdeki görevi başlat":"✓ Görev açık"):"Bu bölüm otomatik akıyor";
+  el("geriBtn").disabled=suB===0;
+  el("ileriBtn").disabled=suB>=B.length-1;
+}
+
+async function guncelle(yeni,yeniKilit){
+  suB=yeni;kilit=yeniKilit;
+  await sb.from("oturumlar").update({aktif_bolum:yeni,faz_kilit:yeniKilit}).eq("kod",kod);
+  cizBolum();cizCevap();cizKat();cizHarita();
+}
+el("baslatBtn").onclick=()=>guncelle(suB,false);
+el("ileriBtn").onclick=()=>{const y=Math.min(B.length-1,suB+1);guncelle(y,sahaTurler.includes(B[y].tur));};
+el("geriBtn").onclick=()=>{const y=Math.max(0,suB-1);guncelle(y,sahaTurler.includes(B[y].tur));};
+
+function cizKat(){
+  el("katSay").textContent=oyuncular.length;
+  const sayim={};
+  oyuncular.forEach(o=>{ if(o.meslek_ad){sayim[o.meslek_ad]=(sayim[o.meslek_ad]||0)+1;} });
+  el("mesDagilim").innerHTML=Object.keys(sayim).map(m=>`<span class="mesEt">${m}: ${sayim[m]}</span>`).join("")||"";
+  if(!oyuncular.length){el("katListe").innerHTML='<div class="bos">Katılım bekleniyor.</div>';return;}
+  const verenler=new Set(kayitlar.filter(k=>k.bolum===suB).map(k=>k.oyuncu_id));
+  const sirali=[...oyuncular].sort((a,b)=>(b.toplam_puan||0)-(a.toplam_puan||0));
+  el("katListe").innerHTML=sirali.map(o=>{
+    const v=verenler.has(o.id);
+    return `<div class="kRow"><div class="nk" style="background:${v?'var(--yesil)':'var(--gri-3)'}"></div>
+      <div class="ad">${o.isim}<div class="mes">${o.meslek_ad||'—'} · ${o.seviye||'Çırak'}</div></div>
+      <div class="pz" style="color:${(o.toplam_puan||0)>0?'var(--altin)':'var(--gri-3)'}">${o.toplam_puan||0}</div></div>`;
+  }).join("");
+}
+
+function cizCevap(){
+  const list=kayitlar.filter(k=>k.bolum===suB);
+  if(!list.length){el("cevapAlani").innerHTML='<div class="bos">Bu bölümde henüz cevap yok.</div>';return;}
+  const b=B[suB];
+  if(["prompt_saha","onarim","saha_vaka"].includes(b.tur)){
+    const s=[...list].sort((a,b)=>b.puan-a.puan);
+    el("cevapAlani").innerHTML=s.map(c=>`<div class="cevapKutu"><span class="pz" style="color:${c.puan>=75?'var(--yesil)':c.puan>=50?'var(--altin)':'var(--kirmizi-parlak)'}">${c.puan}</span>
+      <div class="ad">${c.isim} <span style="color:var(--gri-3)">· ${c.meslek||''}</span></div><div class="ic">${(c.icerik||'').slice(0,150)}</div></div>`).join("");
+  } else {
+    const dg=list.filter(c=>c.dogru).length;
+    el("cevapAlani").innerHTML=`<div style="font-size:13px;color:var(--gri-1);margin-bottom:10px;">${list.length} cevap · ${dg} doğru</div>`+
+      list.map(c=>`<div class="cevapKutu"><div class="ad">${c.isim} ${c.dogru?'✓':'✕'}</div><div class="ic">${c.icerik}</div></div>`).join("");
+  }
+}
+
+function cizHarita(){
+  el("haritaListe").innerHTML=B.map((b,i)=>`<div class="satir ${i===suB?'simdi':''}">
+    <div class="ix">${i}</div><div>${b.ad||turAd[b.tur]||b.tur}</div></div>`).join("");
+}
+
+kur();
+</script>
+</body>
+</html>
