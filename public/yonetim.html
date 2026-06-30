@@ -72,6 +72,10 @@
           <button class="btn btn-hayalet" id="geriBtn" style="flex:1;">‹ Önceki</button>
           <button class="btn btn-ana" id="ileriBtn" style="flex:2;">Sonraki bölüm ›</button>
         </div>
+        <div id="egitmenNotu" style="display:none;margin-top:14px;padding:14px 16px;background:rgba(245,181,68,.08);border:1px solid rgba(245,181,68,.3);border-radius:10px;">
+          <div style="font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#F5B544;margin-bottom:6px;">🎤 Eğitmen Notu (sadece sen görüyorsun)</div>
+          <div id="egitmenNotuMetin" style="font-size:13.5px;line-height:1.55;color:#E8E8EE;"></div>
+        </div>
       </div></div>
 
       <div class="kart blok"><div class="kart-ic">
@@ -100,12 +104,12 @@ const B=window.BOLUMLER;
 let kod=null, suB=0, kilit=true, oyuncular=[], kayitlar=[];
 
 const turAd={ giris:"Açılış", meslek_secimi:"Departman seçimi", bolum_gecis:"Bölüm geçişi",
-  ogren_tahmin:"Öğren · Tahmin makinesi", ogren_kart:"Öğren · Ders notu", arac_ogren:"Öğren · Araç filosu",
+  anlatim_slayt:"Anlatım slaydı", ogren_tahmin:"Öğren · Tahmin makinesi", ogren_kart:"Öğren · Ders notu", arac_ogren:"Öğren · Araç filosu",
   notebook_ogren:"Öğren · NotebookLM", notebook_demo:"Demo · Sesli özet", akis_ogren:"Öğren · İş akışı", etik_kart:"Öğren · Etik kuralları",
   prompt_ogren:"Öğren · Prompt kurucu", arac_test:"Saha · Isınma testi", arac_secimi:"Saha · Araç seçimi",
   arac_secimi2:"Saha · Kaynak testi", akis_test:"Saha · Akış sıralama", etik_test:"Saha · Etik testi",
-  prompt_saha:"Saha · İlk vaka", onarim:"Saha · Onarım", saha_vaka:"Saha · Final operasyon", final:"Kapanış" };
-const sahaTurler=["arac_test","arac_secimi","arac_secimi2","prompt_saha","onarim","akis_test","saha_vaka","etik_test"];
+  rehberli_gorev:"Saha · Gerçek iş görevi", prompt_saha:"Saha · İlk vaka", onarim:"Saha · Onarım", saha_vaka:"Saha · Final operasyon", final:"Kapanış" };
+const sahaTurler=["arac_test","arac_secimi","arac_secimi2","prompt_saha","onarim","akis_test","rehberli_gorev","saha_vaka","etik_test"];
 
 (function zerreler(){const at=document.querySelector(".atmosfer");for(let i=0;i<10;i++){const z=document.createElement("div");z.className="zerre";z.style.left=Math.random()*100+"%";z.style.animationDuration=(8+Math.random()*8)+"s";z.style.animationDelay=(Math.random()*8)+"s";at.appendChild(z);}})();
 
@@ -138,6 +142,21 @@ function cizBolum(){
   el("baslatBtn").textContent=sahaMi?(kilit?"▶ Bu bölümdeki görevi başlat":"✓ Görev açık"):"Bu bölüm otomatik akıyor";
   el("geriBtn").disabled=suB===0;
   el("ileriBtn").disabled=suB>=B.length-1;
+
+  // Eğitmen notu — anlatım slaytı veya bölüm geçişinde göster
+  const notKutu=el("egitmenNotu"), notMetin=el("egitmenNotuMetin");
+  let not="";
+  if(b.tur==="anlatim_slayt" && window.ANLATIM_SLAYTLAR && window.ANLATIM_SLAYTLAR[b.slayt]){
+    not=window.ANLATIM_SLAYTLAR[b.slayt].egitmenNotu||"";
+  } else if(b.tur==="bolum_gecis"){
+    not="Bu bir bölüm geçiş perdesi. Bölümü kısaca tanıt, sonra 'Sonraki'ye bas.";
+  } else if(b.tur==="notebook_demo"){
+    not="ŞİMDİ: NotebookLM'de sesli özeti (Audio Overview) projeksiyondan çal. Bu en etkili an — sıkıcı PDF'in podcaste dönüşünü dinletsin.";
+  } else if(b.tur==="rehberli_gorev"){
+    not="Katılımcılar örnek dosyayı indirip gerçek araçta yapacak. Sen de ekranda aynı adımları projeksiyondan göster. 'Görevi başlat' demeyi unutma.";
+  }
+  if(not){ notMetin.textContent=not; notKutu.style.display="block"; }
+  else notKutu.style.display="none";
 }
 
 async function guncelle(yeni,yeniKilit){

@@ -360,3 +360,61 @@ function etikTestEkran(idx){
     };
   });
 }
+
+// ---- SAHA: REHBERLİ GÖREV (örnek dosya → gerçek araçta yap → çıktıyı değerlendir) ----
+function rehberliGorevEkran(idx, b){
+  const g = window.rehberliGorev(b.gorev);
+  if(!g) return bekleEkran("Görev yükleniyor.","Görev");
+  const aracRenk = g.arac==="NotebookLM"?"#22C55E":g.arac==="Claude"?"#E11D34":"#8B5CF6";
+  const aracIkon = g.arac==="NotebookLM"?"🎧":g.arac==="Claude"?"💬":"🎬";
+  const adimlar = g.adimlar.map((a,i)=>`
+    <div style="display:flex;gap:12px;align-items:flex-start;margin-bottom:11px;">
+      <div style="width:26px;height:26px;border-radius:8px;background:${aracRenk};color:#fff;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:13px;flex-shrink:0;">${i+1}</div>
+      <div style="flex:1;font-size:14px;line-height:1.5;padding-top:2px;">${a}</div>
+    </div>`).join("");
+  ekran(`<div style="flex:1;padding:24px 0;"><div class="kapsul">
+    <div class="merkez"><div class="pill gir" style="margin-bottom:14px;border-color:${aracRenk}55;color:${aracRenk};background:${aracRenk}1A;">${g.rozet}</div>
+      <h2 class="h2 gir gir-1" style="margin-bottom:8px;">${g.baslik}</h2></div>
+    <div class="kart gir gir-2" style="margin-bottom:14px;border-left:3px solid ${aracRenk};border-radius:var(--r-m);"><div class="kart-ic">
+      <div class="etiket" style="margin-bottom:8px;">Senaryo</div>
+      <p style="font-size:15px;line-height:1.55;">${g.senaryo}</p></div></div>
+
+    <a href="${g.dosya}" download="${g.dosyaAd}" class="btn btn-hayalet btn-blok gir gir-3" style="margin-bottom:16px;text-decoration:none;border-color:${aracRenk}66;">⬇ Örnek dosyayı indir — ${g.dosyaAd}</a>
+
+    <div class="kart gir gir-3" style="margin-bottom:16px;"><div class="kart-ic">
+      <div class="etiket" style="margin-bottom:14px;">${aracIkon} ${g.arac}'ta yap</div>
+      ${adimlar}
+    </div></div>
+
+    <div class="kart gir gir-4" style="border-color:var(--altin)44;"><div class="kart-ic">
+      <div class="etiket" style="color:var(--altin);margin-bottom:8px;">Çıktını değerlendir</div>
+      <p class="kucuk" style="margin-bottom:12px;">${g.ciktiIstegi}</p>
+      <textarea class="alan" id="rgIn" placeholder="Aracın sana verdiği çıktıyı buraya yapıştır..."></textarea>
+      <button class="btn btn-ana btn-blok btn-buyuk" id="rgBtn" style="margin-top:12px;">Değerlendir →</button>
+    </div></div>
+  </div></div>`);
+
+  $("#rgBtn").onclick = async ()=>{
+    const cikti = $("#rgIn").value.trim();
+    if(cikti.length<15) return alert("Çıktını yapıştır (en az birkaç cümle).");
+    calisiyorEkran("Claude çıktını değerlendiriyor...");
+    try{
+      const r = await fetch("/api/degerlendir",{method:"POST",headers:{"Content-Type":"application/json"},
+        body:JSON.stringify({prompt:cikti, gorev:g.gorevDeger})});
+      const d = await r.json(); if(!r.ok) throw new Error(d.error||"hata");
+      await kaydet(idx,"rehberli_gorev",cikti.slice(0,200),null,d.puan,{detay:d.detay,gb:d.geri_bildirim,iyi:d.iyilestirilmis});
+      basariPerde(d.puan,"Çıktın değerlendirildi",()=>{
+        ekran(`<div style="flex:1;padding:24px 0;"><div class="kapsul">
+          <div class="merkez olcek"><div class="pill" style="margin-bottom:8px;">${g.baslik}</div>
+            <div class="dev" style="font-size:60px;color:${renk(d.puan)};">${d.puan}</div>
+            <div class="kucuk" style="margin-bottom:20px;">/ 100 puan</div></div>
+          <div class="gb gir gir-1" style="margin-bottom:12px;">${d.geri_bildirim}</div>
+          ${d.iyilestirilmis?`<div class="kart gir gir-2" style="border-color:var(--altin)44;"><div class="kart-ic" style="padding:18px;">
+            <div class="etiket" style="color:var(--altin);margin-bottom:8px;">Daha da iyisi için ipucu</div>
+            <div style="font-size:13.5px;line-height:1.6;color:var(--beyaz);white-space:pre-wrap;">${d.iyilestirilmis}</div></div></div>`:""}
+          <div class="gb yesil olcek" style="margin-top:14px;text-align:center;">Kaydedildi ✓ Sıradaki görev için bekle</div>
+        </div></div>`);
+      });
+    }catch(e){ hataEkran(e.message); }
+  };
+}

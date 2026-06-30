@@ -66,19 +66,22 @@ function girisArkaPlanKapat(){
 
 // 1) ROL SEÇİMİ — Eğitmen / Öğrenci
 function girisEkran(){
-  girisArkaPlanAc();
+  girisArkaPlanKapat(); // iki sütunlu düzende ayrı arka plan yok
   ekran(`
-    <div class="merkez" style="flex:1; padding:30px 0;">
-      <div class="kapsul merkez">
-        <div class="pill gir gir-1" style="margin-bottom:26px;">● CANLI EĞİTİM SİMÜLASYONU</div>
-        <div class="dev gir gir-2" style="font-size:clamp(38px,10vw,62px); margin-bottom:12px;">AI<br>AKADEMİ</div>
-        <p class="govde gir gir-3" style="max-width:360px; margin-bottom:34px;">
+    <div class="giris-duzen">
+      <div class="giris-sol gir gir-1">
+        <div class="pill" style="margin-bottom:24px;">● CANLI EĞİTİM SİMÜLASYONU</div>
+        <div class="dev" style="font-size:clamp(38px,9vw,60px); margin-bottom:14px;">AI<br>AKADEMİ</div>
+        <p class="govde" style="max-width:380px; margin-bottom:32px;">
           Sıradan bir eğitim değil. Bir göreve başla, gerçek vakalar çöz, yapay zekâyı
           <b style="color:var(--beyaz)">yaparak</b> öğren.</p>
         <div style="width:100%; max-width:380px; display:flex; flex-direction:column; gap:13px;">
-          <button class="btn btn-ana btn-blok btn-buyuk gir gir-4" id="rolOgrenci">🎓 &nbsp;Öğrenci olarak katıl</button>
-          <button class="btn btn-hayalet btn-blok btn-buyuk gir gir-5" id="rolEgitmen">🔑 &nbsp;Eğitmen girişi</button>
+          <button class="btn btn-ana btn-blok btn-buyuk" id="rolOgrenci">🎓 &nbsp;Öğrenci olarak katıl</button>
+          <button class="btn btn-hayalet btn-blok btn-buyuk" id="rolEgitmen">🔑 &nbsp;Eğitmen girişi</button>
         </div>
+      </div>
+      <div class="giris-sag gir gir-2">
+        <div class="giris-gorsel"></div>
       </div>
     </div>`, false);
   $("#rolOgrenci").onclick = ()=> ogrenciGirisEkran();
@@ -191,6 +194,7 @@ function bolumCiz(idx, kilit){
   if(t==="ogren_kart")     return kartEkran(b.veri);
   if(t==="arac_ogren")     return aracOgrenEkran();
   if(t==="prompt_ogren")   return promptOgrenEkran();
+  if(t==="anlatim_slayt")  return anlatimSlaytEkran(b);
   if(t==="notebook_ogren") return notebookOgrenEkran();
   if(t==="notebook_demo")  return notebookDemoEkran();
   if(t==="akis_ogren")     return akisOgrenEkran();
@@ -201,6 +205,7 @@ function bolumCiz(idx, kilit){
   if(t==="prompt_saha")    return sahaSarmal(idx,kilit,()=>promptSahaEkran(idx,b));
   if(t==="onarim")         return sahaSarmal(idx,kilit,()=>onarimEkran(idx));
   if(t==="akis_test")      return sahaSarmal(idx,kilit,()=>akisTestEkran(idx));
+  if(t==="rehberli_gorev") return sahaSarmal(idx,kilit,()=>rehberliGorevEkran(idx,b));
   if(t==="saha_vaka")      return sahaSarmal(idx,kilit,()=>sahaVakaEkran(idx,b));
   if(t==="etik_test")      return sahaSarmal(idx,kilit,()=>etikTestEkran(idx));
   if(t==="final")          return finalEkran();

@@ -48,6 +48,7 @@ window.BOLUMLER = [
   { tur:"meslek_secimi" },
 
   { tur:"bolum_gecis", no:1, ad:"Temeller", alt:"Yapay zekâ aslında ne yapıyor?", sure:"~15 dk" },
+  { tur:"anlatim_slayt", slayt:"ai_nedir" },
   { tur:"ogren_tahmin" },
   { tur:"ogren_kart", veri:{ baslik:"Demek ki...", maddeler:[
     { ik:"🎯", b:"AI bir tahmin makinesidir", a:"Düşünmez, bir sonraki en olası kelimeyi seçer. Bu yüzden bazen emin görünüp yanılır (halüsinasyon)." },
@@ -57,6 +58,7 @@ window.BOLUMLER = [
   { tur:"arac_test", faz:"saha" },
 
   { tur:"bolum_gecis", no:2, ad:"Araç Filosu", alt:"Her iş için doğru aleti seç", sure:"~18 dk" },
+  { tur:"anlatim_slayt", slayt:"neden_arac" },
   { tur:"arac_ogren" },
   { tur:"arac_secimi", faz:"saha" },
 
@@ -66,20 +68,27 @@ window.BOLUMLER = [
   { tur:"arac_secimi2", faz:"saha" },
 
   { tur:"bolum_gecis", no:4, ad:"Prompt Ustalığı", alt:"AI'a konuşmayı öğren", sure:"~25 dk" },
+  { tur:"anlatim_slayt", slayt:"prompt_neden" },
   { tur:"prompt_ogren" },
   { tur:"prompt_saha", vakaAdi:"bilgi_krizi", faz:"saha" },
   { tur:"onarim", faz:"saha" },
 
-  { tur:"bolum_gecis", no:5, ad:"İş Akışı", alt:"Araçları birbirine bağla, gerçek güç burada", sure:"~15 dk" },
+  { tur:"bolum_gecis", no:5, ad:"Gerçek İş", alt:"Excel, PDF, Word — işini AI'a yaptır", sure:"~25 dk" },
+  { tur:"rehberli_gorev", gorev:"excel_analiz", faz:"saha" },
+  { tur:"rehberli_gorev", gorev:"pdf_notebook", faz:"saha" },
+  { tur:"rehberli_gorev", gorev:"word_sunum", faz:"saha" },
+
+  { tur:"bolum_gecis", no:6, ad:"İş Akışı", alt:"Araçları birbirine bağla, gerçek güç burada", sure:"~15 dk" },
+  { tur:"anlatim_slayt", slayt:"is_akisi" },
   { tur:"akis_ogren" },
   { tur:"akis_test", faz:"saha" },
 
-  { tur:"bolum_gecis", no:6, ad:"Saha Operasyonu", alt:"Gerçek kriz, gerçek zaman baskısı", sure:"~22 dk" },
+  { tur:"bolum_gecis", no:7, ad:"Saha Operasyonu", alt:"Gerçek kriz, gerçek zaman baskısı", sure:"~22 dk" },
   { tur:"saha_vaka", vakaAdi:"saha_operasyonu", faz:"saha", asama:1 },
   { tur:"saha_vaka", vakaAdi:"saha_kriz2", faz:"saha", asama:2 },
 
-  { tur:"bolum_gecis", no:7, ad:"Sorumlu Kullanım", alt:"Güç büyük, sorumluluk da öyle", sure:"~8 dk" },
-  { tur:"etik_kart" },
+  { tur:"bolum_gecis", no:8, ad:"Sorumlu Kullanım", alt:"Güç büyük, sorumluluk da öyle", sure:"~8 dk" },
+  { tur:"anlatim_slayt", slayt:"etik" },
   { tur:"etik_test", faz:"saha" },
 
   { tur:"final" },
@@ -164,3 +173,125 @@ window.ETIK_SORU = {
   dogru:1,
   aciklama:"Gizli ve kişisel veriyi (kimlik no, sağlık, müşteri bilgisi) halka açık araçlara vermeden önce çıkarmak esastır. AI'dan vazgeçmek değil, sorumlu kullanmak doğru cevaptır.",
 };
+
+// ============================================================
+// ANLATIM SLAYTLARI — eğitmen bunlardan anlatır (ekranda dolu durur)
+// gomulu eğitmen notu: "egitmenNotu" alanı (katılımcı görmez, sen panelde görürsün)
+// ============================================================
+window.ANLATIM_SLAYTLAR = {
+  ai_nedir:{
+    rozet:"TEMEL KAVRAM",
+    baslik:"Yapay zekâ aslında ne yapıyor?",
+    govde:"AI, öğrendiği milyonlarca metinden yola çıkarak <b>bir sonraki kelimeyi tahmin eden</b> bir sistemdir. Telefonundaki kelime önerisinin devasa, çok daha güçlü hâli gibi düşün.",
+    maddeler:[
+      ["🎯","Tahmin eder, düşünmez","Olasılıkları tartar, en olasıyı seçer. Bilinçli bir varlık değildir."],
+      ["⚠️","Bazen emin görünüp yanılır","Buna 'halüsinasyon' denir. Bu yüzden önemli her şeyi doğrulamak gerekir."],
+      ["🗝️","Anahtar: nasıl sorduğun","İyi yönlendirilirse olağanüstü, kötü yönlendirilirse vasat sonuç verir."],
+    ],
+    egitmenNotu:"Telefon klavyesi benzetmesiyle başla. 'AI sihir değil, olasılık tahmini' vurgusunu yap. Halüsinasyon örneği ver: kendinden emin yanlış cevap. Buradan 'o yüzden doğrulama bizim işimiz' mesajına geç.",
+  },
+  neden_arac:{
+    rozet:"STRATEJİ",
+    baslik:"Neden tek araç yetmez?",
+    govde:"Çoğu kişi her işi tek bir araçta yapmaya çalışır. Oysa <b>marangoz tek alet kullanmaz.</b> Her iş için doğru aleti seçmek, işin kalitesini ve hızını belirler.",
+    maddeler:[
+      ["💬","Claude","Yazma, analiz, uzun belge, nüanslı metin"],
+      ["🎧","NotebookLM","Sadece senin belgelerinden, kaynak göstererek"],
+      ["🔷","Gemini","Google ekosistemi, çok dosya, geniş bağlam"],
+    ],
+    egitmenNotu:"Marangoz benzetmesini kullan. Her aracı 20-30 saniyede tanıt, abartma. Vurgu: 'hangisi daha iyi' yanlış soru, 'bu iş için hangisi' doğru soru.",
+  },
+  prompt_neden:{
+    rozet:"USTALIK",
+    baslik:"Aynı araç, 10 kat daha iyi sonuç",
+    govde:"AI'dan aldığın cevabın kalitesi, <b>çoğunlukla senin sorma şeklinden</b> gelir. İyi bir prompt, vasat bir aracı bile ustalaştırır.",
+    maddeler:[
+      ["🎭","Rol ver","'Deneyimli bir İK uzmanısın...' — modele kimlik kazandır"],
+      ["🎯","Görevi netleştir","Tam olarak ne istediğini belirsizlik bırakmadan söyle"],
+      ["📐","Format belirt","Uzunluk, ton, yapı — çıktının şeklini sen tayin et"],
+    ],
+    egitmenNotu:"Önce kötü bir prompt örneği ver ('bir e-posta yaz'), sonra iyisini ('rol + görev + format'). Farkı canlı hissettir. 'Birazdan bunu siz yapacaksınız' diyerek heyecan yarat.",
+  },
+  is_akisi:{
+    rozet:"İLERİ SEVİYE",
+    baslik:"Asıl güç: araçları zincirlemek",
+    govde:"Tek bir araç güçlüdür. Ama gerçek verimlilik, bir işin <b>araçtan araca aktığı bir hat</b> kurduğunda doğar. Bir iş, baştan sona bir akış olur.",
+    maddeler:[
+      ["📚","Önce kaynak","NotebookLM ile belgelerden kaynaklı özet çıkar"],
+      ["✍️","Sonra metin","Claude ile o özeti istenen biçime dönüştür"],
+      ["🎬","En son görsel","Veo 3 ile kısa bir tanıtım/sunum videosu üret"],
+    ],
+    egitmenNotu:"Kendi iş akışından bir örnek anlat. Kurumsal karşılık: rapor → NotebookLM özet → Claude metin → sunum. Mesaj: gerçek verimlilik araçları birbirine bağlamaktan gelir.",
+  },
+  etik:{
+    rozet:"SORUMLULUK",
+    baslik:"Güç büyük, sorumluluk da öyle",
+    govde:"AI işini kolaylaştırır ama <b>kararı ve sorumluluğu sen taşırsın.</b> Özellikle kurumsal bir ortamda dört kural hayati önemde.",
+    maddeler:[
+      ["🔍","Doğrula","AI emin görünse de yanılabilir; önemli her şeyi kontrol et"],
+      ["🔒","Gizliliğe dikkat","Müşteri verisi, kimlik no, gizli belge — düşünmeden yapıştırma"],
+      ["✍️","Son söz sende","AI taslak verir; onaylayan ve sahiplenen sensin"],
+    ],
+    egitmenNotu:"Gizlilik kuralını özellikle vurgula — müşteri/poliçe verisini halka açık araçlara yapıştırmamak. Şirketin AI politikası varsa burada hatırlat.",
+  },
+};
+
+// ============================================================
+// REHBERLİ GÖREVLER — örnek dosya + gerçek araçta yap + çıktıyı değerlendir
+// ============================================================
+window.REHBERLI_GOREVLER = {
+  excel_analiz:{
+    rozet:"GERÇEK İŞ · EXCEL",
+    baslik:"Bir Excel'i analiz ettir",
+    arac:"Claude",
+    dosya:"dosyalar/ornek_calisan_verileri.xlsx",
+    dosyaAd:"ornek_calisan_verileri.xlsx",
+    senaryo:"Elinde 60 çalışanlık bir veri tablosu var: departman, performans, memnuniyet, ayrılma riski. Yöneticin 'bu veriden ne çıkıyor?' diye soruyor.",
+    adimlar:[
+      "Aşağıdaki örnek Excel dosyasını indir",
+      "claude.ai'ı aç, dosyayı yükle (ataç simgesi)",
+      "Şu promptu dene: 'Bu çalışan verisini analiz et. Hangi departmanda ayrılma riski yüksek? Memnuniyet ile performans arasında ilişki var mı? 5 maddede özetle.'",
+      "Çıkan analizi oku, bir takip sorusu sor: 'Yüksek riskli çalışanlar için 3 öneri ver.'",
+    ],
+    ciktiIstegi:"Claude'un sana verdiği analizin en önemli bulgusunu buraya yapıştır — değerlendirelim.",
+    gorevDeger:"Bir çalışan verisi analizinin kalitesini değerlendir: içgörü var mı, somut mu, aksiyon önerisi içeriyor mu?",
+  },
+  pdf_notebook:{
+    rozet:"GERÇEK İŞ · PDF + NOTEBOOKLM",
+    baslik:"Bir prosedürü NotebookLM'e sor",
+    arac:"NotebookLM",
+    dosya:"dosyalar/ornek_izin_proseduru.pdf",
+    dosyaAd:"ornek_izin_proseduru.pdf",
+    senaryo:"Bir çalışan 'doğum iznim kaç gün?' diye sordu. Yanıtın resmi prosedüre dayanmalı, uydurma olmamalı.",
+    adimlar:[
+      "Aşağıdaki örnek izin prosedürü PDF'ini indir",
+      "notebooklm.google.com'u aç, yeni notebook oluştur, PDF'i kaynak olarak yükle",
+      "Şunu sor: 'Doğum izni kaç gün? Hangi maddeye göre?'",
+      "NotebookLM'in kaynağı (madde numarasını) gösterdiğine dikkat et — işte fark bu.",
+    ],
+    ciktiIstegi:"NotebookLM'in verdiği yanıtı buraya yapıştır — kaynak gösterip göstermediğine bakalım.",
+    gorevDeger:"Bir kaynak-temelli yanıtın kalitesini değerlendir: net mi, doğru mu, kaynağa dayanıyor mu?",
+  },
+  word_sunum:{
+    rozet:"GERÇEK İŞ · WORD + CLAUDE",
+    baslik:"Dağınık notları sunuma çevir",
+    arac:"Claude",
+    dosya:"dosyalar/ornek_egitim_notlari.docx",
+    dosyaAd:"ornek_egitim_notlari.docx",
+    senaryo:"Elinde dağınık oryantasyon notları var (Word). Bunlardan sunulabilir, derli toplu bir sunum taslağı çıkarman lazım.",
+    adimlar:[
+      "Aşağıdaki örnek Word dosyasını indir",
+      "claude.ai'ı aç, dosyayı yükle",
+      "Şunu dene: 'Bu dağınık notları, 6 slaytlık bir oryantasyon sunumu taslağına dönüştür. Her slayt için başlık + 3 madde + konuşmacı notu ver.'",
+      "Çıkan taslağı incele, bir slaydı daha detaylı isteyip geliştir.",
+    ],
+    ciktiIstegi:"Claude'un hazırladığı sunum taslağından bir slaytı buraya yapıştır — değerlendirelim.",
+    gorevDeger:"Bir sunum slaytı taslağının kalitesini değerlendir: net mi, sunulabilir mi, mantıklı yapıda mı?",
+  },
+};
+
+// Mesleğe göre rehberli görev seçimi (şimdilik hepsi ortak; ileride dallanabilir)
+function rehberliGorev(adi){ return window.REHBERLI_GOREVLER[adi]; }
+window.rehberliGorev = rehberliGorev;
+function anlatimSlayt(adi){ return window.ANLATIM_SLAYTLAR[adi]; }
+window.anlatimSlayt = anlatimSlayt;

@@ -219,3 +219,21 @@ function etikKartEkran(){
     </div></div>`).join("")}
   </div></div>`);
 }
+
+// ---- ANLATIM SLAYDI (eğitmen bundan anlatır, ekran dolu durur) ----
+function anlatimSlaytEkran(b){
+  const s = window.anlatimSlayt(b.slayt);
+  if(!s) return bekleEkran("Eğitmen anlatıyor.","Anlatım");
+  const maddeler = s.maddeler.map((m,i)=>`
+    <div class="kart gir gir-${i+2}" style="margin-bottom:11px;"><div class="kart-ic" style="padding:18px;display:flex;gap:15px;align-items:flex-start;">
+      <div style="font-size:30px;line-height:1;">${m[0]}</div>
+      <div><div class="h3" style="font-size:16px;margin-bottom:3px;">${m[1]}</div><p class="govde" style="font-size:14px;">${m[2]}</p></div>
+    </div></div>`).join("");
+  ekran(`<div style="flex:1;padding:24px 0;"><div class="kapsul">
+    <div class="merkez"><div class="pill gir" style="margin-bottom:18px;">${s.rozet}</div>
+      <h1 class="h1 gir gir-1" style="margin-bottom:14px;max-width:520px;">${s.baslik}</h1>
+      <p class="govde gir gir-1" style="max-width:480px;margin-bottom:26px;font-size:16.5px;">${s.govde}</p></div>
+    ${maddeler}
+    <div class="gir" style="text-align:center;margin-top:14px;color:var(--gri-3);font-size:13px;">Eğitmen anlatıyor — hazır olunca devam edeceğiz</div>
+  </div></div>`);
+}

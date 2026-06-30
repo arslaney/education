@@ -221,7 +221,7 @@ textarea.alan{min-height:130px; resize:vertical; line-height:1.6;}
 /* ---- Giriş ekranı arka plan görseli (Sompo) ---- */
 body.giris-arkaplan::after{
   content:""; position:fixed; inset:0; z-index:0; pointer-events:none;
-  background-image:url("gorsel/giris.webp");
+  background-image:url("gorsel/normale_don.jpg");
   background-size:cover; background-position:center;
   opacity:.32;
 }
@@ -231,3 +231,35 @@ body.giris-arkaplan::before{
   background:linear-gradient(180deg, rgba(10,10,15,.78) 0%, rgba(10,10,15,.55) 40%, rgba(10,10,15,.85) 100%);
 }
 body.giris-arkaplan .atmosfer{opacity:.5;}
+
+/* ---- Giriş ekranı: iki sütunlu düzen (solda butonlar, sağda görsel) ---- */
+.giris-duzen{
+  flex:1; display:flex; align-items:stretch; min-height:100vh;
+}
+.giris-sol{
+  flex:1; display:flex; flex-direction:column; justify-content:center;
+  padding:40px clamp(24px,5vw,64px);
+}
+.giris-sag{
+  flex:1; position:relative; overflow:hidden; min-height:100vh;
+}
+.giris-gorsel{
+  position:absolute; inset:0;
+  background-image:url("gorsel/normale_don.jpg");
+  background-size:cover; background-position:center;
+}
+/* görselin sol kenarına yumuşak geçiş (zemine karışsın) */
+.giris-sag::before{
+  content:""; position:absolute; inset:0; z-index:1; pointer-events:none;
+  background:linear-gradient(90deg, var(--zemin-0) 0%, rgba(10,10,15,.4) 18%, transparent 45%);
+}
+
+/* Dar ekran (telefon): alt alta — üstte görsel, altta butonlar */
+@media(max-width:820px){
+  .giris-duzen{ flex-direction:column; }
+  .giris-sag{ min-height:38vh; order:-1; }
+  .giris-sol{ padding:30px 24px 40px; justify-content:flex-start; }
+  .giris-sag::before{
+    background:linear-gradient(180deg, transparent 40%, rgba(10,10,15,.5) 75%, var(--zemin-0) 100%);
+  }
+}
